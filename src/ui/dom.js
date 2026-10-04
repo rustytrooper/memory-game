@@ -27,7 +27,7 @@ function appendChildren(element, children) {
 export function el(tag, props = {}, children = []) {
   const element = document.createElement(tag);
   applyProps(element, props);
-  appendChildren(element, children);
+  appendChildren(element, Array.isArray(children) ? children : [children]);
   return element;
 }
 
