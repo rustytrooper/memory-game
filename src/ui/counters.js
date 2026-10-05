@@ -1,7 +1,6 @@
 import { el } from './dom.js';
 import { getState } from '../core/state.js';
 
-
 let movesValueElement = null;
 let pairsValueElement = null;
 
@@ -18,7 +17,6 @@ export function renderCounters(parent) {
 
   updateCounters();
 }
-
 
 function createCounter(label, valueElement, modifier) {
   return el('div', { className: `counter counter--${modifier}` }, [

@@ -1,15 +1,15 @@
 import { CARD_IMAGES } from '../data/cards.js';
 
 const createInitialState = () => ({
-  deck: [],                     
-  firstCard: null,      
-  secondCard: null,     
-  moves: 0,             
-  pairs: 0,         
-  totalPairs: CARD_IMAGES.length, 
-  isLocked: false,             
-  isFinished: false,           
-  mismatchTimerId: null,       
+  deck: [],
+  firstCard: null,
+  secondCard: null,
+  moves: 0,
+  pairs: 0,
+  totalPairs: CARD_IMAGES.length,
+  isLocked: false,
+  isFinished: false,
+  mismatchTimerId: null,
 });
 
 let state = createInitialState();

@@ -2,11 +2,11 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  width: 100%;         
+  width: 100%;
   max-width: 520px;
   margin: 0 auto;
   padding: 16px;
-  perspective: 1000px; 
+  perspective: 1000px;
 }
 
 .card {

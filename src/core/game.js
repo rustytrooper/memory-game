@@ -12,26 +12,20 @@ import {
   clearMismatchTimer,
   resetState,
 } from './state.js';
-import {
-  getCardByElement,
-  flipCard,
-  unflipCard,
-  markMatched,
-  clearBoard,
-  renderBoard,
-} from '../ui/board.js';
+import { getCardByElement, flipCard, unflipCard, markMatched, renderBoard } from '../ui/board.js';
 import { createShuffledDeck } from './deck.js';
 import { setDeck } from './state.js';
 import { updateCounters } from '../ui/counters.js';
+import { openWinModal } from '../ui/winModal.js';
+import { addResult } from '../storage/leaderboard.js';
 
 const MISMATCH_DELAY_MS = 1000;
+let appRoot = null;
 
-let boardElement = null;
-
-export function initGame(boardRoot) {
-  boardElement = boardRoot;
-  boardElement.addEventListener('click', onBoardClick);
-  boardElement.addEventListener('keydown', onBoardKeyDown);
+export function initGame(root) {
+  appRoot = root;
+  root.addEventListener('click', onBoardClick);
+  root.addEventListener('keydown', onBoardKeyDown);
 }
 
 function onBoardClick(event) {
@@ -60,7 +54,6 @@ function findCardByElement(element) {
   return getCardByElement(element);
 }
 
-
 function handleCardClick(card) {
   const state = getState();
 
@@ -87,7 +80,6 @@ function handleCardClick(card) {
   const second = card;
 
   if (first.id === second.id) {
-  
     first.isMatched = true;
     second.isMatched = true;
     markMatched(first);
@@ -100,10 +92,16 @@ function handleCardClick(card) {
 
     if (pairs === totalPairs) {
       setFinished(true);
+      const { moves } = getState();
+      addResult(moves);
+      openWinModal({
+        moves,
+        onNewGame: () => startNewGame(appRoot),
+      });
     }
   } else {
     lock();
-   
+
     const timerId = setTimeout(() => {
       first.isFlipped = false;
       second.isFlipped = false;
@@ -118,7 +116,7 @@ function handleCardClick(card) {
   }
 }
 
-export function startNewGame(boardRoot) {
+export function startNewGame(root) {
   const { mismatchTimerId } = getState();
   if (mismatchTimerId) {
     clearTimeout(mismatchTimerId);
@@ -130,8 +128,6 @@ export function startNewGame(boardRoot) {
   const deck = createShuffledDeck();
   setDeck(deck);
 
+  renderBoard(root);
   updateCounters();
-  clearBoard();
-  renderBoard(boardRoot);
-
 }

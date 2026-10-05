@@ -2,42 +2,48 @@ import { el, img } from './dom.js';
 import { getState } from '../core/state.js';
 
 const cardElements = new Map();
-
 let boardElement = null;
 
 export function renderBoard(parent) {
+  if (!boardElement) {
+    boardElement = el('div', { className: 'board' });
+    parent.appendChild(boardElement);
+  } else {
+    clearBoardContent();
+  }
+
   const { deck } = getState();
-
-  boardElement = el('div', { className: 'board' });
-
   for (const card of deck) {
     const cardElement = createCardElement(card);
     boardElement.appendChild(cardElement);
     cardElements.set(cardElement, card);
   }
+}
 
-  parent.appendChild(boardElement);
+function clearBoardContent() {
+  while (boardElement.firstChild) {
+    boardElement.removeChild(boardElement.firstChild);
+  }
+  cardElements.clear();
 }
 
 function createCardElement(card) {
   const image = img(card.imageSrc, card.imageAlt, { className: 'card__image' });
 
-  const frontFace = el('div', {
-    className: 'card__face card__face--front',
-  });
-
-  const backFace = el('div', {
-    className: 'card__face card__face--back',
-  }, image);
-
+  const frontFace = el('div', { className: 'card__face card__face--front' });
+  const backFace = el('div', { className: 'card__face card__face--back' }, image);
   const inner = el('div', { className: 'card__inner' }, [frontFace, backFace]);
 
-  return el('div', {
-    className: 'card',
-    role: 'button',
-    tabIndex: 0,
-    'aria-label': 'Card, face down',
-  }, inner);
+  return el(
+    'div',
+    {
+      className: 'card',
+      role: 'button',
+      tabIndex: 0,
+      'aria-label': 'Card, face down',
+    },
+    inner
+  );
 }
 
 export function getCardElement(card) {
@@ -45,6 +51,10 @@ export function getCardElement(card) {
     if (mappedCard === card) return element;
   }
   return null;
+}
+
+export function getCardByElement(element) {
+  return cardElements.get(element) || null;
 }
 
 export function flipCard(card) {
@@ -60,16 +70,4 @@ export function unflipCard(card) {
 export function markMatched(card) {
   const element = getCardElement(card);
   if (element) element.classList.add('is-matched');
-}
-
-export function clearBoard() {
-  if (boardElement) {
-    boardElement.remove();
-    boardElement = null;
-  }
-  cardElements.clear();
-}
-
-export function getCardByElement(element) {
-  return cardElements.get(element) || null;
 }
